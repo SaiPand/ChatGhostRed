@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+    integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat Grupales</title>
+
+  <style>
+    body {
+      margin: 0 auto;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+
+    .container {
+      border: 2px solid #dedede;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    .darker {
+      border-color: #ccc;
+      background-color: #ddd;
+    }
+
+    .container::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    .container img {
+      float: left;
+      max-width: 60px;
+      width: 100%;
+      margin-right: 20px;
+      border-radius: 50%;
+    }
+
+    .container img.right {
+      float: right;
+      margin-left: 20px;
+      margin-right: 0;
+    }
+
+    .time-right {
+      float: right;
+      color: #aaa;
+    }
+
+    .time-left {
+      float: left;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <a href="{% url 'algo:logout' %}" class="btn btn-danger">Cerrar Seccion</a>
+
+    <h1 class="text-center">{{ user.username }}</h1>
+  </div>
+
+  <div class="container">
+    <style>
+      input[type=text],
+      select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+
+      input[type=submit]:hover {
+        background-color: #45a049;
+      }
+
+      div {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+      }
+    </style>
+    <div class="d-flex align-content-start justify-content-center flex-wrap">
+      {% for room in lis_room %}
+      {% if room.name != '' %}
+      <div class="flex-grow-1">
+        <div class="card ">
+          <div class="card-header">
+            <p>Grupo: {{ room.name }}</p>
+          </div>
+          <div class="card-body">
+            <a href="{% url 'algo:room2' room.name user %}" class="btn btn-success">
+              ir al grupo</a>
+          </div>
+        </div>
+
+      </div>
+
+
+
+      {% endif %}
+      {% endfor %}
+
+    </div>
+
+
+    {% if user.is_superuser %}
+    <hr>
+    <form id="post-form" method="POST" action="checkview">
+      {% csrf_token %}
+      <label>Room Name</label>
+      <input type="text" name="room_name" id="room_name" width="100px" />
+      <input type="submit" value="Crear grupo" class="btn btn-success" style="width: 100%"">
+    </form>
+    {% endif %}
+  </div>
+</body>
+
+</html>
