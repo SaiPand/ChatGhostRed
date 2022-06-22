@@ -44,13 +44,6 @@ def register(request):
             user.set_password(password)
             user.save()
             
-            # print('Register')
-            # user = authenticate(username=username, password=password)
-            # if user is not None:
-            #     print('Existe usuario')
-            #     if user.is_active:
-            #         print('El usuario esta activo')
-            #         login(request, user)
             return redirect('algo:login')
     else:
         form = SingUpForm()
@@ -71,14 +64,17 @@ def home(request):
 
 @login_required(login_url='algo:login')
 def room(request, room):
-    username = request.GET.get('username')
-    room_details = Room.objects.get(name=room)
-    
-    return render(request, 'room.html', {
-        'username': username,
-        'room': room,
-        'room_details': room_details
-    })
+    try:
+        username = request.GET.get('username')
+        room_details = Room.objects.get(name=room)
+        
+        return render(request, 'room.html', {
+            'username': username,
+            'room': room,
+            'room_details': room_details
+        })
+    except Exception:
+        return redirect('algo:home')
 
 @login_required(login_url='algo:login')
 def room2(request, room, user):
@@ -92,15 +88,6 @@ def room2(request, room, user):
     except Exception:
         return redirect('algo:home')
 
-
-# def room(request, room, user):
-#     username = request.GET.get('username')
-#     room_details = Room.objects.get(name=room)
-#     return render(request, 'room.html', {
-#         'username': user,
-#         'room': room,
-#         'room_details': room_details
-#     })
 
 @login_required(login_url='algo:login')
 def checkview(request):
@@ -128,3 +115,39 @@ def getMessages(request, room):
 
     messages = Message.objects.filter(room=room_details.id)
     return JsonResponse({"messages":list(messages.values())})
+    
+@login_required(login_url='algo:login')
+def roomDelete(request, room):
+
+
+    if not request.user.is_superuser:
+        return redirect('algo:home')
+
+    if Room.objects.filter(name=room).exists():
+        Room.objects.filter(name=room).delete()
+
+    return redirect('algo:home')
+
+@login_required(login_url='algo:login')
+def editroom(request, room):
+    if not request.user.is_superuser:
+        return redirect('algo:home')
+
+    if request.method == 'POST':
+        newroom = request.POST['room_name_new']
+        
+
+        if Room.objects.filter(name=room).exists():
+            if Room.objects.filter(name=newroom).exists():
+                return redirect('algo:home')
+
+            
+            roomst = Room.objects.get(name=room)
+            roomst.name = newroom
+            roomst.save()
+
+            return redirect('algo:home')
+        
+
+    context = {'room': room}
+    return render(request, 'editar.html', context)  

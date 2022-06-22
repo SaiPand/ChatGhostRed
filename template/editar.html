@@ -62,9 +62,10 @@
 
 <body>
   <div>
-    <a href="{% url 'algo:logout' %}" class="btn btn-danger">Cerrar Seccion</a>
 
-    <h1 class="text-center">{{ user.username }}</h1>
+    <a href="{% url 'algo:home' %}" class="btn btn-danger">Regresar</a>
+
+    <h1 class="text-center">Editar Grupo {{ room }}</h1>
   </div>
 
   <div class="container">
@@ -91,44 +92,14 @@
         padding: 20px;
       }
     </style>
-    <div  class="d-flex align-content-start justify-content-center flex-wrap">
-      {% for room in lis_room %}
-      {% if room.name != '' %}
-      <div class="flex-grow-1">
-        <div class="card ">
-          <div class="card-header">
-            <p>Grupo: {{ room.name }}</p>
-          </div>
-          <div  id = "grupo" class="card-body">
-
-            <a href="{% url 'algo:room2' room.name user %}" class="btn btn-success">
-              Ir Al Grupo</a>
-            
-              {% if user.is_superuser %}
-              <a href="{% url 'algo:deleteRoom' room.name %}" class="btn btn-success">
-              Borrar Grupo</a>
-              
-              <a href="{% url 'algo:edit' room.name %}"  class="btn btn-success">Editar</a>
-              
-              {% endif %}
-
-          </div>
-        </div>
-      </div>
-
-      {% endif %}
-      {% endfor %}
-
-    </div>
-
 
     {% if user.is_superuser %}
     <hr>
-    <form id="post-form" method="POST" action="checkview">
+    <form id="post-form" method="POST">
       {% csrf_token %}
-      <label>Room Name</label>
-      <input type="text" name="room_name" id="room_name" width="100px" />
-      <input type="submit" value="Crear grupo" class="btn btn-success" style="width: 100%"">
+      <label>New name room</label>
+      <input type="text" name="room_name_new" id="room_name_new" width="100px" />
+      <input type="submit" value="Editar Grupo" class="btn btn-success" style="width: 100%"">
     </form>
     {% endif %}
   </div>
